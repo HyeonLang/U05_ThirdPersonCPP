@@ -26,6 +26,11 @@ void UCStateComponent::SetBackstepMode()
 	ChangeType(EStateType::Backstep);
 }
 
+void UCStateComponent::SetEquipMode()
+{
+	ChangeType(EStateType::Equip);
+}
+
 void UCStateComponent::ChangeType(EStateType InNewType)
 {
 	if (OnStateTypeChanged.IsBound())
