@@ -14,12 +14,12 @@ enum class EActionType : uint8
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FActionTypeChanged, EActionType, InPrevType, EActionType, InNewType);
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class THIRDPERSONCPP_API UCActionComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	UCActionComponent();
 
 protected:
@@ -27,25 +27,28 @@ protected:
 
 public:
 	UFUNCTION(BlueprintPure)
-	FORCEINLINE bool IsUnarmedMode() { return Type == EActionType::Unarmed; }
+		FORCEINLINE UCActionData* GetCurrentActionData() { return DataAssets[(int32)Type]; }
 
 	UFUNCTION(BlueprintPure)
-	FORCEINLINE bool IsFistMode() { return Type == EActionType::Fist; }
+		FORCEINLINE bool IsUnarmedMode() { return Type == EActionType::Unarmed; }
 
 	UFUNCTION(BlueprintPure)
-	FORCEINLINE bool IsOneHandMode() { return Type == EActionType::OneHand; }
+		FORCEINLINE bool IsFistMode() { return Type == EActionType::Fist; }
 
 	UFUNCTION(BlueprintPure)
-	FORCEINLINE bool IsTwoHandMode() { return Type == EActionType::TwoHand; }
+		FORCEINLINE bool IsOneHandMode() { return Type == EActionType::OneHand; }
 
 	UFUNCTION(BlueprintPure)
-	FORCEINLINE bool IsMagicBallMode() { return Type == EActionType::MagicBall; }
+		FORCEINLINE bool IsTwoHandMode() { return Type == EActionType::TwoHand; }
 
 	UFUNCTION(BlueprintPure)
-	FORCEINLINE bool IsWarpMode() { return Type == EActionType::Warp; }
+		FORCEINLINE bool IsMagicBallMode() { return Type == EActionType::MagicBall; }
 
 	UFUNCTION(BlueprintPure)
-	FORCEINLINE bool IsWhirlwindMode() { return Type == EActionType::Whirlwind; }
+		FORCEINLINE bool IsWarpMode() { return Type == EActionType::Warp; }
+
+	UFUNCTION(BlueprintPure)
+		FORCEINLINE bool IsWhirlwindMode() { return Type == EActionType::Whirlwind; }
 
 public:
 	void SetUnarmedMode();
@@ -62,13 +65,13 @@ private:
 
 public:
 	UPROPERTY(BlueprintAssignable)
-	FActionTypeChanged OnActionTypeChanged;
+		FActionTypeChanged OnActionTypeChanged;
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "DataAsset")
-	UCActionData* DataAssets[(int32)EActionType::Max];
+		UCActionData* DataAssets[(int32)EActionType::Max];
 
 private:
 	EActionType Type;
-	
+public:
 };

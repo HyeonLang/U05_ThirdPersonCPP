@@ -3,10 +3,13 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Materials/MaterialInstanceDynamic.h"
+#include "Materials/MaterialInstanceConstant.h"
 #include "Components/CAttributeComponent.h"
 #include "Components/COptionComponent.h"
 #include "Components/CMontagesComponent.h"
 #include "Components/CActionComponent.h"
+#include "Actions/CActionData.h"
 
 ACPlayer::ACPlayer()
 {
@@ -18,11 +21,11 @@ ACPlayer::ACPlayer()
 	CHelpers::CreateSceneComponent(this, &CameraComp, "CameraComp", SpringArmComp);
 	
 	//Create Actor Component
+	CHelpers::CreateActorComponent(this, &ActionComp, "ActionComp");
+	CHelpers::CreateActorComponent(this, &MontagesComp, "MontagesComp");
 	CHelpers::CreateActorComponent(this, &AttributeComp, "AttributeComp");
 	CHelpers::CreateActorComponent(this, &OptionComp, "OptionComp");
 	CHelpers::CreateActorComponent(this, &StateComp, "StateComp");
-	CHelpers::CreateActorComponent(this, &MontagesComp, "MontagesComp");
-	CHelpers::CreateActorComponent(this, &ActionComp, "ActionComp");
 
 	//Component Settings
 	//-> MeshComp
@@ -56,7 +59,19 @@ void ACPlayer::BeginPlay()
 	Super::BeginPlay();
 
 	StateComp->OnStateTypeChanged.AddDynamic(this, &ACPlayer::OnStateTypeChanged);
-	
+
+	// Create Dynamic MAterial
+	UMaterialInstanceConstant* BodyMaterialAsset;
+	UMaterialInstanceConstant* LogoMaterialAsset;
+
+	CHelpers::GetAssetDynamic(&BodyMaterialAsset, "/Game/Character/Materials/MI_UE4Man_Body");
+	CHelpers::GetAssetDynamic(&LogoMaterialAsset, "/Game/Character/Materials/M_UE4Man_ChestLogo");
+
+	BodyMaterial = UMaterialInstanceDynamic::Create(BodyMaterialAsset, this);
+	LogoMaterial = UMaterialInstanceDynamic::Create(LogoMaterialAsset, this);
+
+	GetMesh()->SetMaterial(0, BodyMaterial);
+	GetMesh()->SetMaterial(1, LogoMaterial);
 }
 
 void ACPlayer::Tick(float DeltaTime)
@@ -64,6 +79,13 @@ void ACPlayer::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
+
+void ACPlayer::ChangeBodyColor(FLinearColor InColor)
+{
+	BodyMaterial->SetVectorParameterValue("BodyColor", InColor);
+	LogoMaterial->SetVectorParameterValue("BodyColor", InColor);
+}
+
 
 void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -83,6 +105,7 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("OneHand", EInputEvent::IE_Pressed, this, &ACPlayer::OnOneHand);
 	PlayerInputComponent->BindAction("TwoHand", EInputEvent::IE_Pressed, this, &ACPlayer::OnTwoHand);
 }
+
 
 void ACPlayer::OnMoveForward(float Axis)
 {
@@ -200,13 +223,22 @@ void ACPlayer::Begin_Backstep()
 
 void ACPlayer::End_Roll()
 {
+	if (ActionComp->GetCurrentActionData()->EquipmentData.bLookForward == true)
+	{
+		bUseControllerRotationYaw = true;
+		GetCharacterMovement()->bOrientRotationToMovement = false;
+	}
+
 	StateComp->SetIdleMode();
 }
 
 void ACPlayer::End_Backstep()
 {
-	bUseControllerRotationYaw = false;
-	GetCharacterMovement()->bOrientRotationToMovement = true;
+	if (ActionComp->GetCurrentActionData()->EquipmentData.bLookForward == false)
+	{
+		bUseControllerRotationYaw = false;
+		GetCharacterMovement()->bOrientRotationToMovement = true;
+	}
 
 	StateComp->SetIdleMode();
 }
