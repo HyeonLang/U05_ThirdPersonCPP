@@ -72,6 +72,8 @@ void ACPlayer::BeginPlay()
 
 	GetMesh()->SetMaterial(0, BodyMaterial);
 	GetMesh()->SetMaterial(1, LogoMaterial);
+
+	ActionComp->SetUnarmedMode();
 }
 
 void ACPlayer::Tick(float DeltaTime)
@@ -104,6 +106,8 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Fist", EInputEvent::IE_Pressed, this, &ACPlayer::OnFist);
 	PlayerInputComponent->BindAction("OneHand", EInputEvent::IE_Pressed, this, &ACPlayer::OnOneHand);
 	PlayerInputComponent->BindAction("TwoHand", EInputEvent::IE_Pressed, this, &ACPlayer::OnTwoHand);
+
+	PlayerInputComponent->BindAction("PrimaryAction", EInputEvent::IE_Pressed, this, &ACPlayer::OnPrimaryAction);
 }
 
 
@@ -188,6 +192,11 @@ void ACPlayer::OnTwoHand()
 {
 	CheckFalse(StateComp->IsIdleMode());
 	ActionComp->SetTwoHandMode();
+}
+
+void ACPlayer::OnPrimaryAction()
+{
+	ActionComp->DoAction();
 }
 
 void ACPlayer::Begin_Roll()

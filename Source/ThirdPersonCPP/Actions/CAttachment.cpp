@@ -14,7 +14,7 @@ void ACAttachment::BeginPlay()
 	Super::BeginPlay();
 }
 
-void ACAttachment::AttachTo(FName InSoketName)
+void ACAttachment::ActorAttachTo(FName InSoketName)
 {
 	AttachToComponent
 	(

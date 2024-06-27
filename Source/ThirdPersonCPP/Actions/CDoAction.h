@@ -1,0 +1,50 @@
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Global.h"
+#include "GameFramework/Character.h"
+#include "Components/CAttributeComponent.h"
+#include "Components/CStateComponent.h"
+#include "CActionData.h"
+#include "CDoAction.generated.h"
+
+class ACharacter;
+class UCAttributeComponent;
+class UCStateComponent;
+
+UCLASS()
+class THIRDPERSONCPP_API ACDoAction : public AActor
+{
+	GENERATED_BODY()
+	
+public:	
+	ACDoAction();
+
+protected:
+	virtual void BeginPlay() override;
+
+public:
+	virtual void Tick(float DeltaTime) override;
+
+public:
+	virtual void DoAction() {};
+	virtual void Begin_DoAction() {};
+	virtual void End_DoAction() {};
+
+public:
+	void SetDatas(const TArray<FDoActionData>& InDatas);
+
+protected:
+	UPROPERTY(BlueprintReadOnly)
+	ACharacter* OwnerCharacter;
+
+	UPROPERTY(BlueprintReadOnly)
+	UCAttributeComponent* AttributeComp;
+
+	UPROPERTY(BlueprintReadOnly)
+	UCStateComponent* StateComp;
+
+protected:
+	TArray<FDoActionData> Datas;
+
+};
