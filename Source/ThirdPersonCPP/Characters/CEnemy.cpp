@@ -15,6 +15,9 @@
 
 ACEnemy::ACEnemy()
 {
+	//Property Settings
+	LaunchValue = 25.0f;
+
 	//Create Scene Component
 	CHelpers::CreateSceneComponent(this, &NameWidgetComp, "NameWidgetComp", GetMesh());
 	CHelpers::CreateSceneComponent(this, &HealthWidgetComp, "HealthWidgetComp", GetMesh());
@@ -99,14 +102,26 @@ void ACEnemy::BeginPlay()
 
 void ACEnemy::ChangeBodyColor(FLinearColor InColor)
 {
+	// IsDead
+	CheckTrue(StateComp->IsDeadMode());
+	// IsHitted 
+	if (StateComp->IsHittedMode())
+	{
+		PrintLine();
+		LogoMaterial->SetScalarParameterValue("bHitted", 1.f);
+		LogoMaterial->SetVectorParameterValue("LogoEmissive", InColor);
+
+		return;
+	}
+
 	BodyMaterial->SetVectorParameterValue("BodyColor", InColor);
 	LogoMaterial->SetVectorParameterValue("BodyColor", InColor);
 }
 
 float ACEnemy::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	float DamageValue = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
-
+	DamageValue = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	
 	DamageInstigator = EventInstigator;
 
 	AttributeComp->DecreaseHealth(Damage);
@@ -128,24 +143,48 @@ void ACEnemy::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
 	switch (InNewType)
 	{
 	case EStateType::Hitted:
+		Hitted();
 		break;
 	case EStateType::Dead:
+		 Dead();
 		break;
 	}
 }
 
 void ACEnemy::Hitted()
 {
+	// Apply HealthWidget
 	UCEnemyHealthWidget* HealthWidgetInstance = Cast<UCEnemyHealthWidget>(HealthWidgetComp->GetUserWidgetObject());
 	if (HealthWidgetInstance)
 	{
 		HealthWidgetInstance->ApplyHealth(AttributeComp->GetCurrentHealth(), AttributeComp->GetMaxHealth());
 	}
+	// Play Hitted Montage
+	MontagesComp->PlayHitted();
 
+	// Look At Attacker
+	FVector Start = GetActorLocation();
+	FVector Target = DamageInstigator->GetPawn()->GetActorLocation();
+	SetActorRotation(UKismetMathLibrary::FindLookAtRotation(Start, Target));
+
+	// Hit Back
+	FVector Direction = Start - Target;
+	Direction.Normalize();
+	LaunchCharacter(Direction * DamageValue * LaunchValue, true, false); 
+
+	// Set Hitted Logo Color
+	ChangeBodyColor(FLinearColor(40, 0 ,0));
+	UKismetSystemLibrary::K2_SetTimer(this, "RestoreLogoColor", 0.5f, false);
 }
 
 void ACEnemy::Dead()
 {
+	
+}
+
+void ACEnemy::RestoreLogoColor()
+{
+	LogoMaterial->SetScalarParameterValue("bHitted", 0.f);
 }
 
 

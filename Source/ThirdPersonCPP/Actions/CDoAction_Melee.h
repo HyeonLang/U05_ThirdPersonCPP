@@ -1,10 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Actions/CDoAction.h"
 #include "CDoAction_Melee.generated.h"
+
+class ACharacter;
 
 UCLASS()
 class THIRDPERSONCPP_API ACDoAction_Melee : public ACDoAction
@@ -20,7 +20,15 @@ public:
 	virtual void Begin_DoAction() override;
 	virtual void End_DoAction() override;
 
+public:
+	void EnableCombo();
+	void DisableCombo();
+	void ClearHittedCharacters();
+
 private:
 	int32 ComboCount;
+	bool bCanCombo;
+	bool bSuccessCombo;
 
+	TArray<ACharacter*> HittedCharacters;
 };

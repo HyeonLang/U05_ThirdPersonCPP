@@ -36,6 +36,9 @@ private:
 	void Hitted();
 	void Dead();
 
+	UFUNCTION()
+	void RestoreLogoColor();
+
 protected:
 	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly, Category = "Components")
 		UCAttributeComponent* AttributeComp;
@@ -58,10 +61,15 @@ protected:
 	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly, Category = "Components")
 		UWidgetComponent* HealthWidgetComp;
 
+	UPROPERTY(EditAnywhere, Category = "Hitted")
+	float LaunchValue;
+
 private:
 	UMaterialInstanceDynamic* BodyMaterial;
 	UMaterialInstanceDynamic* LogoMaterial;
 
 	AController* DamageInstigator;
+
+	float DamageValue;
 
 };

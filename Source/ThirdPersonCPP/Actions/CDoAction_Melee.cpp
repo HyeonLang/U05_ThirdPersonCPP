@@ -8,6 +8,13 @@ void ACDoAction_Melee::DoAction()
 {
 	Super::DoAction();
 	CheckFalse(Datas.Num() > 0);
+	if (bCanCombo)
+	{
+		bCanCombo = false;
+		bSuccessCombo = true;
+		
+		return;
+	}
 	CheckFalse(StateComp->IsIdleMode());
 
 	StateComp->SetActionMode();
@@ -16,14 +23,41 @@ void ACDoAction_Melee::DoAction()
 	Datas[0].bCanMove ? AttributeComp->SetMove() : AttributeComp->SetStop();
 }
 
+void ACDoAction_Melee::EnableCombo()
+{
+	bCanCombo = true;
+}
+
+void ACDoAction_Melee::DisableCombo()
+{
+	bCanCombo = false;
+}
+
+void ACDoAction_Melee::ClearHittedCharacters()
+{
+	HittedCharacters.Empty();
+}
+
 void ACDoAction_Melee::Begin_DoAction()
 {
 	Super::Begin_DoAction();
+	CheckFalse(bSuccessCombo);
+	bSuccessCombo = false;
+
+	OwnerCharacter->StopAnimMontage();
+
+	ComboCount++;
+	ComboCount = FMath::Clamp(ComboCount, 0, Datas.Num() - 1);
+	OwnerCharacter->PlayAnimMontage(Datas[ComboCount].AnimMontage, Datas[ComboCount].PlayRate, Datas[ComboCount].StartSection);
+	Datas[ComboCount].bCanMove ? AttributeComp->SetMove() : AttributeComp->SetStop();
 }
 
 void ACDoAction_Melee::End_DoAction()
 {
 	Super::End_DoAction();
+
+	OwnerCharacter->StopAnimMontage();
+	ComboCount = 0;
 
 	StateComp->SetIdleMode();
 	AttributeComp->SetMove();
@@ -32,7 +66,33 @@ void ACDoAction_Melee::End_DoAction()
 void ACDoAction_Melee::OnAttachmentBeginOverlap(ACharacter* InAttacker, AActor* InCauser, ACharacter* InOtherCharacter)
 {
 	Super::OnAttachmentBeginOverlap(InAttacker, InCauser, InOtherCharacter);
+	
+	// Bloking Multiple Hit
+	int32 NumberOfHittedCharacters = HittedCharacters.Num();
+	HittedCharacters.AddUnique(InOtherCharacter);
+	CheckFalse(NumberOfHittedCharacters < HittedCharacters.Num());
 
+	//HitStop
+	float HitStop = Datas[ComboCount].HitStop;
+	if (FMath::IsNearlyZero(HitStop))
+	{
+		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.02f);
+		UKismetSystemLibrary::K2_SetTimer(this, "RestoreGlobalTimeDilation", HitStop * 0.02f, false);
+
+	}
+
+	TSubclassOf<UCameraShake> ShakeClass = Datas[ComboCount].ShakeClass;
+	if (ShakeClass)
+	{
+		APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+		if (PC)
+		{
+			PC->PlayerCameraManager->PlayCameraShake(ShakeClass);
+		}
+	}
+
+
+	// Take Damage
 	FDamageEvent DamageEvent;
 	InOtherCharacter->TakeDamage(Datas[ComboCount].Power, DamageEvent, InAttacker->GetController(), InAttacker);
 }
