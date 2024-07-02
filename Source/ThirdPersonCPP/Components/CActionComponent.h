@@ -27,6 +27,7 @@ protected:
 
 public:
 	void DoAction();
+	void OffAllCollisions();
 
 public:
 	UFUNCTION(BlueprintPure)

@@ -76,4 +76,14 @@ void ACAttachment::ActorAttachTo(FName InSoketName)
 	);
 }
 
+void ACAttachment::ComponentAttachTo(USceneComponent* InComponent, FName InSoketName)
+{
+	InComponent->AttachToComponent
+	(
+		OwnerCharacter->GetMesh(),
+		FAttachmentTransformRules(EAttachmentRule::KeepRelative, true),
+		InSoketName
+	);
+}
+
 

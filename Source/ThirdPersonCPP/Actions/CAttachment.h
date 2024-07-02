@@ -49,6 +49,9 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void ActorAttachTo(FName InSoketName);
 
+	UFUNCTION(BlueprintCallable)
+	void ComponentAttachTo(USceneComponent* InComponent, FName InSoketName);
+
 private:
 	UPROPERTY(VisibleDefaultsOnly)
 	USceneComponent* RootComp;
