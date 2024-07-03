@@ -4,6 +4,7 @@
 #include "GameFramework/Character.h"
 #include "Components/CStateComponent.h"
 #include "Interfaces/CCharacterInterface.h"
+#include "Components/TimelineComponent.h"
 #include "CEnemy.generated.h"
 
 class UCAttributeComponent;
@@ -12,6 +13,7 @@ class UCStateComponent;
 class UCMontagesComponent;
 class UCActionComponent;
 class UWidgetComponent;
+class UCurveFloat;
 
 UCLASS()
 class THIRDPERSONCPP_API ACEnemy : public ACharacter, public ICCharacterInterface
@@ -23,6 +25,9 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
+public:
+	virtual void Tick(float DeltaTime) override;
 
 public:
 	void ChangeBodyColor(FLinearColor InColor) override;
@@ -38,6 +43,12 @@ private:
 
 	UFUNCTION()
 	void RestoreLogoColor();
+
+	UFUNCTION()
+	void StartDissolve(float Output);
+
+	UFUNCTION()
+	void EndDissolve();
 
 protected:
 	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly, Category = "Components")
@@ -64,12 +75,19 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Hitted")
 	float LaunchValue;
 
+	UPROPERTY(EditAnywhere, Category = "Dead")
+	UCurveFloat* DissolveCurve;
+
 private:
 	UMaterialInstanceDynamic* BodyMaterial;
 	UMaterialInstanceDynamic* LogoMaterial;
+
+	UPROPERTY(VisibleInstanceOnly)
+	UMaterialInstanceDynamic* DissolveMaterial;
 
 	AController* DamageInstigator;
 
 	float DamageValue;
 
+	FTimeline DissolveTime;
 };

@@ -38,6 +38,17 @@ void UCActionComponent::DoAction()
 	}
 }
 
+void UCActionComponent::DoSubAction(bool bBegin)
+{
+	CheckTrue(IsUnarmedMode());
+
+	if (DataAssets[(int32)Type] && DataAssets[(int32)Type]->GetDoAction())
+	{
+		ACDoAction* DoAction = DataAssets[(int32)Type]->GetDoAction();
+		bBegin ? DoAction->Begin_SubAction() : DoAction->End_SubAction();
+	}
+}
+
 void UCActionComponent::OffAllCollisions()
 {
 	for (const auto& DataAsset : DataAssets)

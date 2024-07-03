@@ -27,6 +27,7 @@ protected:
 
 public:
 	void DoAction();
+	void DoSubAction(bool bBegin);
 	void OffAllCollisions();
 
 public:
