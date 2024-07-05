@@ -44,6 +44,11 @@ void UCActionData::BeginPlay(ACharacter* InOwnerCharacter)
 			Attachment->OnAttachmentBeginOverlap.AddDynamic(DoAction, &ACDoAction::OnAttachmentBeginOverlap);
 			Attachment->OnAttachmentEndOverlap.AddDynamic(DoAction, &ACDoAction::OnAttachmentEndOverlap);
 		}
+
+		if (Equipment)
+		{
+			DoAction->SetEquipped(Equipment->IsEquipped());
+		}
 	}
 
 }

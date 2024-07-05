@@ -42,6 +42,7 @@ public:
 
 public:
 	void SetDatas(const TArray<FDoActionData>& InDatas);
+	void SetEquipped(const bool* InEquipped);
 
 protected:
 	UPROPERTY(BlueprintReadOnly)
@@ -55,5 +56,5 @@ protected:
 
 protected:
 	TArray<FDoActionData> Datas;
-
+	const bool* bEquipped;
 };
