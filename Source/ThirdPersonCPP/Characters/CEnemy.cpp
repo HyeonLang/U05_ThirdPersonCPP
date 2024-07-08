@@ -93,8 +93,9 @@ void ACEnemy::BeginPlay()
 	// Binding StateType Changed Event
 	StateComp->OnStateTypeChanged.AddDynamic(this, &ACEnemy::OnStateTypeChanged);
 
+	// BP_BeginPlay();
 	Super::BeginPlay();
-	ActionComp->SetUnarmedMode();
+	//ActionComp->SetUnarmedMode();
 
 	NameWidgetComp->InitWidget();
 	UCEnemyNameWidget* NameWidgetInstance = Cast<UCEnemyNameWidget>(NameWidgetComp->GetUserWidgetObject());

@@ -56,12 +56,25 @@ public:
 		FORCEINLINE bool IsWhirlwindMode() { return Type == EActionType::Whirlwind; }
 
 public:
+	UFUNCTION(BlueprintCallable)
 	void SetUnarmedMode();
+
+	UFUNCTION(BlueprintCallable)
 	void SetFistMode();
+
+	UFUNCTION(BlueprintCallable)
 	void SetOneHandMode();
+
+	UFUNCTION(BlueprintCallable)
 	void SetTwoHandMode();
+
+	UFUNCTION(BlueprintCallable)
 	void SetMagicBallMode();
+
+	UFUNCTION(BlueprintCallable)
 	void SetWarpMode();
+
+	UFUNCTION(BlueprintCallable)
 	void SetWhirlwindMode();
 
 private:

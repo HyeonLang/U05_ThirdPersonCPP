@@ -34,6 +34,8 @@ public:
 	virtual void Begin_SubAction() {};
 	virtual void End_SubAction() {};
 
+	virtual void Abort() {};
+
 public:
 	UFUNCTION()
 	virtual void OnAttachmentBeginOverlap(ACharacter* InAttacker, AActor* InCauser, ACharacter* InOtherCharacter) {};
