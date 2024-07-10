@@ -2,6 +2,7 @@
 #include "Global.h"
 #include "Components/CActionComponent.h"
 #include "Actions/CActionData.h"
+#include "Actions/CAction.h"
 #include "Actions/CDoAction.h"
 #include "Actions/CDoAction_Melee.h"
 
@@ -19,7 +20,7 @@ void UCAnimNotifyState_Combo::NotifyBegin(USkeletalMeshComponent* MeshComp, UAni
 	UCActionComponent* ActionComp = CHelpers::GetComponent<UCActionComponent>(MeshComp->GetOwner());
 	CheckNull(ActionComp);
 
-	UCActionData* ActionData = ActionComp->GetCurrentActionData();
+	UCAction* ActionData = ActionComp->GetCurrentActionData();
 	CheckNull(ActionData);
 
 	ACDoAction* DoAction = ActionData->GetDoAction();
@@ -40,7 +41,7 @@ void UCAnimNotifyState_Combo::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimS
 	UCActionComponent* ActionComp = CHelpers::GetComponent<UCActionComponent>(MeshComp->GetOwner());
 	CheckNull(ActionComp);
 
-	UCActionData* ActionData = ActionComp->GetCurrentActionData();
+	UCAction* ActionData = ActionComp->GetCurrentActionData();
 	CheckNull(ActionData);
 
 	ACDoAction* DoAction = ActionData->GetDoAction();

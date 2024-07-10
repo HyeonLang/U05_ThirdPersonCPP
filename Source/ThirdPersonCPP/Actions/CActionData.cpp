@@ -4,11 +4,13 @@
 #include "CEquipment.h"
 #include "CAttachment.h"
 #include "CDoAction.h"
+#include "CAction.h"
 
-void UCActionData::BeginPlay(ACharacter* InOwnerCharacter)
+void UCActionData::BeginPlay(ACharacter* InOwnerCharacter, UCAction** OutAction)
 {
 	FTransform Transform;
 
+	ACAttachment* Attachment = nullptr;
 	if (AttachmentClass)
 	{
 		Attachment = InOwnerCharacter->GetWorld()->SpawnActorDeferred<ACAttachment>(AttachmentClass, Transform, InOwnerCharacter);
@@ -16,6 +18,7 @@ void UCActionData::BeginPlay(ACharacter* InOwnerCharacter)
 		Attachment->FinishSpawning(Transform);
 	}
 
+	ACEquipment* Equipment = nullptr;
 	if (EquipmentClass) 
 	{
 		Equipment = InOwnerCharacter->GetWorld()->SpawnActorDeferred<ACEquipment>(EquipmentClass, Transform, InOwnerCharacter);
@@ -31,6 +34,7 @@ void UCActionData::BeginPlay(ACharacter* InOwnerCharacter)
 		}
 	}
 
+	ACDoAction* DoAction = nullptr;
 	if (DoActionClass)
 	{
 		DoAction = InOwnerCharacter->GetWorld()->SpawnActorDeferred<ACDoAction>(DoActionClass, Transform, InOwnerCharacter);
@@ -50,7 +54,11 @@ void UCActionData::BeginPlay(ACharacter* InOwnerCharacter)
 			DoAction->SetEquipped(Equipment->IsEquipped());
 		}
 	}
-
+	
+	*OutAction = NewObject<UCAction>();
+	(*OutAction)->Attachment = Attachment;
+	(*OutAction)->Equipment = Equipment;
+	(*OutAction)->DoAction = DoAction;
 }
 
 FString UCActionData::MakeActorLabel(ACharacter* InOwnerCharacter, FString InMiddleName)

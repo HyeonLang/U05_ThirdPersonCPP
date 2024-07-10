@@ -2,6 +2,7 @@
 #include "Global.h"
 #include "Components/CActionComponent.h"
 #include "Actions/CActionData.h"
+#include "Actions/CAction.h"
 #include "Actions/CDoAction.h"
 
 FString UCAnimNotify_EndAction::GetNotifyName_Implementation() const
@@ -18,7 +19,7 @@ void UCAnimNotify_EndAction::Notify(USkeletalMeshComponent* MeshComp, UAnimSeque
 	UCActionComponent* ActionComp = CHelpers::GetComponent<UCActionComponent>(MeshComp->GetOwner());
 	CheckNull(ActionComp);
 
-	UCActionData* ActionData = ActionComp->GetCurrentActionData();
+	UCAction* ActionData = ActionComp->GetCurrentActionData();
 	CheckNull(ActionData);
 
 	ACDoAction* DoAction = ActionData->GetDoAction();
