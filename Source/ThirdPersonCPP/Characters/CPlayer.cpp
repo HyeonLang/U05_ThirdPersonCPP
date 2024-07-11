@@ -253,6 +253,7 @@ void ACPlayer::OffSecondaryAction()
 
 void ACPlayer::OnActionChangeWidget()
 {
+	CheckFalse(StateComp->IsIdleMode());
 	CheckNull(ActionChangeWidget);
 	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.1f);
 	ActionChangeWidget->SetVisibility(ESlateVisibility::Visible);
