@@ -71,6 +71,10 @@ ACEnemy::ACEnemy()
 
 	// Get Dissolve Curve Asset
 	CHelpers::GetAsset(&DissolveCurve, "/Game/Game/Curve_Dissolve");
+
+	// Off Camera Collision
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
+	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 }
 
 void ACEnemy::BeginPlay()

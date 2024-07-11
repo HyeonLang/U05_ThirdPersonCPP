@@ -13,6 +13,8 @@ ACAIController::ACAIController()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	BehaviorRange = 150.f;
+
 	CHelpers::CreateActorComponent<UBlackboardComponent>(this, &Blackboard, "BlackboardComp");
 	CHelpers::CreateActorComponent<UCBehaviorComponent>(this, &BehaviorComp, "BehaviorComp");
 	CHelpers::CreateActorComponent<UAIPerceptionComponent>(this, &PerceptionComp, "PerceptionComp");
@@ -57,6 +59,11 @@ void ACAIController::OnUnPossess()
 void ACAIController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+float ACAIController::GetSightRadius()
+{
+	return Sight->SightRadius;
 }
 
 void ACAIController::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors)
