@@ -24,9 +24,6 @@ protected:
 public:
 	virtual void Tick(float DeltaTime) override;
 
-public:
-	float GetSightRadius();
-	FORCEINLINE float GetBehaviorRange() { return BehaviorRange; }
 private:
 	UFUNCTION()
 	void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
@@ -38,9 +35,6 @@ protected:
 	UPROPERTY(VisibleDefaultsOnly)
 	UCBehaviorComponent* BehaviorComp;
 
-private:
-	UPROPERTY(EditAnywhere)
-	float BehaviorRange;
 
 private:
 	ACEnemy_AI* OwnerEnemy;

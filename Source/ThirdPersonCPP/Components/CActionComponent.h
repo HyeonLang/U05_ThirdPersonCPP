@@ -59,6 +59,9 @@ public:
 	UFUNCTION(BlueprintPure)
 		FORCEINLINE bool IsWhirlwindMode() { return Type == EActionType::Whirlwind; }
 
+	UFUNCTION(BlueprintPure)
+		FORCEINLINE EActionType GetType() { return Type; }
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void SetUnarmedMode();

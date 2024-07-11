@@ -11,6 +11,7 @@
 #include "Components/CActionComponent.h"
 #include "Actions/CActionData.h"
 #include "Actions/CAction.h"
+#include "Widgets/CActionChangeWidget.h"
 
 ACPlayer::ACPlayer()
 {
@@ -53,6 +54,10 @@ ACPlayer::ACPlayer()
 	GetCharacterMovement()->MaxWalkSpeed = AttributeComp->GetSprintSpeed();
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0, 720, 0);
+
+	// Widget Setting
+	CHelpers::GetClass<UCActionChangeWidget>(&ActionChangeWidgetClass, "/Game/Widgets/WB_ActionChange");
+
 }
 
 void ACPlayer::BeginPlay()
@@ -75,6 +80,11 @@ void ACPlayer::BeginPlay()
 	GetMesh()->SetMaterial(1, LogoMaterial);
 
 	ActionComp->SetUnarmedMode();
+
+
+	ActionChangeWidget = CreateWidget<UCActionChangeWidget, APlayerController>(GetController<APlayerController>(), ActionChangeWidgetClass);
+	ActionChangeWidget->AddToViewport();
+	ActionChangeWidget->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void ACPlayer::Tick(float DeltaTime)
@@ -110,6 +120,9 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("MagicBall", EInputEvent::IE_Pressed, this, &ACPlayer::OnMagicBall);
 	PlayerInputComponent->BindAction("Warp", EInputEvent::IE_Pressed, this, &ACPlayer::OnWarp);
 	PlayerInputComponent->BindAction("Whirlwind", EInputEvent::IE_Pressed, this, &ACPlayer::OnWhirlWind);
+
+	PlayerInputComponent->BindAction("LeftControl", EInputEvent::IE_Pressed, this, &ACPlayer::OnActionChangeWidget);
+	PlayerInputComponent->BindAction("LeftControl", EInputEvent::IE_Released, this, &ACPlayer::OffActionChangeWidget);
 
 	PlayerInputComponent->BindAction("PrimaryAction", EInputEvent::IE_Pressed, this, &ACPlayer::OnPrimaryAction);
 	PlayerInputComponent->BindAction("SecondaryAction", EInputEvent::IE_Pressed, this, &ACPlayer::OnSecondaryAction);
@@ -236,6 +249,25 @@ void ACPlayer::OnSecondaryAction()
 void ACPlayer::OffSecondaryAction()
 {
 	ActionComp->DoSubAction(false);
+}
+
+void ACPlayer::OnActionChangeWidget()
+{
+	CheckNull(ActionChangeWidget);
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.1f);
+	ActionChangeWidget->SetVisibility(ESlateVisibility::Visible);
+	UGameplayStatics::GetPlayerController(GetWorld(), 0)->bShowMouseCursor = true;
+	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetInputMode(FInputModeGameAndUI());
+}
+
+void ACPlayer::OffActionChangeWidget()
+{
+	CheckNull(ActionChangeWidget);
+	ActionChangeWidget->SetAction();
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.f);
+	ActionChangeWidget->SetVisibility(ESlateVisibility::Hidden);
+	UGameplayStatics::GetPlayerController(GetWorld(), 0)->bShowMouseCursor = false;
+	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetInputMode(FInputModeGameOnly());
 }
 
 void ACPlayer::Begin_Roll()

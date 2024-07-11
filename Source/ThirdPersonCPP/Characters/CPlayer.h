@@ -15,6 +15,7 @@ class UCStateComponent;
 class UCMontagesComponent;
 class UCActionComponent;
 class UMaterialInstanceDynamic;
+class UCActionChangeWidget;
 
 UCLASS()
 class THIRDPERSONCPP_API ACPlayer : public ACharacter, public ICCharacterInterface, public IGenericTeamAgentInterface
@@ -36,6 +37,10 @@ public:
 
 public:
 	void ChangeBodyColor(FLinearColor InColor) override;
+
+public:
+	FORCEINLINE UCActionComponent* GetActionComp() { return ActionComp; }
+	FORCEINLINE UCStateComponent* GetStateComp() { return StateComp; }
 
 private:
 	void OnMoveForward(float Axis);
@@ -59,6 +64,9 @@ private:
 	void OnPrimaryAction();
 	void OnSecondaryAction();
 	void OffSecondaryAction();
+
+	void OnActionChangeWidget();
+	void OffActionChangeWidget();
 
 private:
 	void Begin_Roll();
@@ -98,8 +106,13 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "TeamID")
 		uint8 TeamID;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Widgetclass")
+	TSubclassOf<UCActionChangeWidget> ActionChangeWidgetClass;
+
 private:
 	UMaterialInstanceDynamic* BodyMaterial;
 	UMaterialInstanceDynamic* LogoMaterial;
+
+	UCActionChangeWidget* ActionChangeWidget;
 
 };
