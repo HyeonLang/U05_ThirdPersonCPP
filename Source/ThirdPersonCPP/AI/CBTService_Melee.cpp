@@ -38,6 +38,8 @@ void UCBTService_Melee::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 	// Not Detected Player
 	if (Player == nullptr)
 	{
+		AIC->ClearFocus(EAIFocusPriority::Gameplay);
+
 		if (PatrolComp->IsPathVaild())
 		{
 			BehaviorComp->SetPatrolMode();
@@ -51,13 +53,14 @@ void UCBTService_Melee::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 	// Detected Player
 	float Distance = EnemyPawn->GetDistanceTo(Player);
 
-	if (Distance < AIC->GetSightRadius())
-	{
-		BehaviorComp->SetApproachMode();
-	}
 	if (Distance < AIC->GetBehaviorRange())
 	{
 		BehaviorComp->SetActionMode();
+		return;
+	}
+	if (Distance < AIC->GetSightRadius())
+	{
+		BehaviorComp->SetApproachMode();
 	}
 	
 }

@@ -42,6 +42,12 @@ private:
 	UPROPERTY(EditAnywhere)
 	float BehaviorRange;
 
+	UPROPERTY(EditAnywhere)
+	bool bDrawRange;
+
+	UPROPERTY(EditAnywhere)
+	int32 Segment;
+
 private:
 	ACEnemy_AI* OwnerEnemy;
 

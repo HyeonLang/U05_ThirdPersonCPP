@@ -15,6 +15,8 @@ void UCPatrolComponent::BeginPlay()
 
 bool UCPatrolComponent::GetMoveTo(FVector& OutLocation)
 {
+	OutLocation = GetOwner()->GetActorLocation();
+
 	CheckFalseResult(IsPathVaild(), false);
 
 	OutLocation = PatrolPath->GetSplineComp()->GetLocationAtSplinePoint(Index, ESplineCoordinateSpace::Type::World);
