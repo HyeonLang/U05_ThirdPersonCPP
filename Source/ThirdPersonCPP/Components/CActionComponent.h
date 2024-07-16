@@ -29,7 +29,11 @@ protected:
 public:
 	void DoAction();
 	void DoSubAction(bool bBegin);
+
+	void Abort();
+
 	void OffAllCollisions();
+	void DestroyAll();
 
 public:
 	UFUNCTION(BlueprintPure)

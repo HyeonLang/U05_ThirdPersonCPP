@@ -63,6 +63,7 @@ ACEnemy::ACEnemy()
 	NameWidgetComp->SetRelativeLocation(FVector(0, 0, 240));
 	NameWidgetComp->SetDrawSize(FVector2D(240, 30));
 	NameWidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
+	NameWidgetComp->SetVisibility(bVisibleNameWidget);
 
 	HealthWidgetComp->SetWidgetClass(HealthWidgetAsset);
 	HealthWidgetComp->SetRelativeLocation(FVector(0, 0, 190));
@@ -157,6 +158,8 @@ float ACEnemy::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 	
 	DamageInstigator = EventInstigator;
 
+	ActionComp->Abort();
+
 	AttributeComp->DecreaseHealth(Damage);
 
 	if (AttributeComp->GetCurrentHealth() <= 0.f)
@@ -223,7 +226,7 @@ void ACEnemy::Dead()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetCharacterMovement()->DisableMovement();
 
-	// Off All Attachment Collisions
+	// Off ActionComp Disable
 	ActionComp->OffAllCollisions();
 
 	// Dissolve
@@ -257,6 +260,7 @@ void ACEnemy::StartDissolve(float Output)
 
 void ACEnemy::EndDissolve()
 {
+	ActionComp->DestroyAll();
 	Destroy();
 }
 
