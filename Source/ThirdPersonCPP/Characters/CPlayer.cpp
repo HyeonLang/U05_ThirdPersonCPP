@@ -5,11 +5,13 @@
 #include "Camera/CameraComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Materials/MaterialInstanceConstant.h"
+#include "Blueprint/UserWidget.h"
 #include "Components/CAttributeComponent.h"
 #include "Components/COptionComponent.h"
 #include "Components/CMontagesComponent.h"
 #include "Components/CActionComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/PostProcessComponent.h"
 #include "Actions/CActionData.h"
 #include "Actions/CAction.h"
 
@@ -21,6 +23,7 @@ ACPlayer::ACPlayer()
 	//Create Scene Component
 	CHelpers::CreateSceneComponent(this, &SpringArmComp, "SpringArmComp", GetMesh());
 	CHelpers::CreateSceneComponent(this, &CameraComp, "CameraComp", SpringArmComp);
+	CHelpers::CreateSceneComponent(this, &PostProcessComp, "PostProcessComp", RootComponent);
 	
 	//Create Actor Component
 	CHelpers::CreateActorComponent(this, &ActionComp, "ActionComp");
@@ -54,6 +57,13 @@ ACPlayer::ACPlayer()
 	GetCharacterMovement()->MaxWalkSpeed = AttributeComp->GetSprintSpeed();
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0, 720, 0);
+
+	//->PostProcessComp
+	PostProcessComp->Settings.bOverride_VignetteIntensity = false;
+	PostProcessComp->Settings.VignetteIntensity = 2.f;
+
+	PostProcessComp->Settings.bOverride_DepthOfFieldFocalDistance = false;
+	PostProcessComp->Settings.DepthOfFieldFocalDistance = 100.f;
 }
 
 void ACPlayer::BeginPlay()
@@ -276,6 +286,11 @@ void ACPlayer::Dead()
 
 	// Off ActionComp Disable
 	ActionComp->OffAllCollisions();
+	DisableInput(GetController<APlayerController>());
+
+	// Enable PostProcess
+	PostProcessComp->Settings.bOverride_VignetteIntensity = true;
+	PostProcessComp->Settings.bOverride_DepthOfFieldFocalDistance = true;
 
 	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.25f);
 	UKismetSystemLibrary::K2_SetTimer(this, "End_Dead", 2.f * (UGameplayStatics::GetGlobalTimeDilation(GetWorld())), false);
@@ -283,7 +298,16 @@ void ACPlayer::Dead()
 
 void ACPlayer::End_Dead()
 {
-	CLog::Print("Game Over");
+	ensure(DeadWidgetClass);
+	APlayerController* PC = GetController<APlayerController>();
+	CheckNull(PC);
+	DeadWidget = CreateWidget<UUserWidget>(PC, DeadWidgetClass);
+	DeadWidget->AddToViewport();
+
+	PC->bShowMouseCursor = true;
+	PC->SetInputMode(FInputModeUIOnly());
+
+	ActionComp->DestroyAll();
 }
 
 void ACPlayer::Begin_Roll()
