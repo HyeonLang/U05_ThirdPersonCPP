@@ -12,6 +12,7 @@
 #include "Components/CActionComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/PostProcessComponent.h"
+#include "Components/CFeetComponent.h"
 #include "Actions/CActionData.h"
 #include "Actions/CAction.h"
 
@@ -31,6 +32,7 @@ ACPlayer::ACPlayer()
 	CHelpers::CreateActorComponent(this, &AttributeComp, "AttributeComp");
 	CHelpers::CreateActorComponent(this, &OptionComp, "OptionComp");
 	CHelpers::CreateActorComponent(this, &StateComp, "StateComp");
+	CHelpers::CreateActorComponent(this, &FeetComp, "FeetComp");
 
 	//Component Settings
 	//-> MeshComp

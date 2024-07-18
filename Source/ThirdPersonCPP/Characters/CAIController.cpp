@@ -5,6 +5,7 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Components/CBehaviorComponent.h"
+#include "Components/CStateComponent.h"
 #include "CEnemy_AI.h"
 #include "CPlayer.h"
 
@@ -63,6 +64,17 @@ void ACAIController::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	FVector Center = OwnerEnemy->GetActorLocation();
+
+	ACPlayer* Player = Cast<ACPlayer>(Blackboard->GetValueAsObject("PlayerKey"));
+	if (Player)
+	{
+		UCStateComponent* StateComp = CHelpers::GetComponent<UCStateComponent>(Player);
+		if (StateComp && StateComp->IsDeadMode())
+		{
+			Blackboard->SetValueAsObject("PlayerKey", nullptr);
+		}
+	}
+
 
 	CheckFalse(bDrawRange);
 	DrawDebugSphere(GetWorld(), Center, Sight->SightRadius, Segment, FColor::Green);
