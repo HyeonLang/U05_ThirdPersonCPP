@@ -8,6 +8,7 @@
 #include "Components/CFeetComponent.h"
 #include "CAnimInstance.generated.h"
 
+
 UCLASS()
 class THIRDPERSONCPP_API UCAnimInstance : public UAnimInstance
 {
@@ -33,4 +34,7 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "InverseKinemetics")
 	FFeetData FeetData;
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "InverseKinemetics")
+	bool bIkMode;
 };

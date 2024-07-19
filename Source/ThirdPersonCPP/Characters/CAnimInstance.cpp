@@ -2,6 +2,7 @@
 #include "Global.h"
 #include "GameFramework/Character.h"
 
+static TAutoConsoleVariable<bool> CVarIkMode(TEXT("Tore.IkMode"), true, TEXT("Enable IkMode"), ECVF_Cheat);
 
 void UCAnimInstance::NativeBeginPlay()
 {
@@ -28,6 +29,8 @@ void UCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	UCFeetComponent* FeetComp = CHelpers::GetComponent<UCFeetComponent>(Character);
 	if (FeetComp)
 		FeetData = FeetComp->GetData();
+
+	bIkMode = CVarIkMode.GetValueOnGameThread();
 }
 
 void UCAnimInstance::OnActionTypeChanged(EActionType InPrevType, EActionType InNewType)

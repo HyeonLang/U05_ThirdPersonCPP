@@ -68,6 +68,11 @@ void ACDoAction_Melee::End_DoAction()
 	AttributeComp->SetMove();
 }
 
+void ACDoAction_Melee::Abort()
+{
+	ComboCount = 0;
+}
+
 void ACDoAction_Melee::OnAttachmentBeginOverlap(ACharacter* InAttacker, AActor* InCauser, ACharacter* InOtherCharacter)
 {
 	Super::OnAttachmentBeginOverlap(InAttacker, InCauser, InOtherCharacter);
